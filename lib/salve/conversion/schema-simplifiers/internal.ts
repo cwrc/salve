@@ -27,7 +27,7 @@ import { fromQNameToURI, localName } from "./common";
 function makeNamePattern(el: Element): ConcreteName {
   switch (el.local) {
     case "name":
-      return new Name(el.mustGetAttribute("ns"), el.text);
+      return new Name(el.mustGetAttribute("ns"), el.text, el.documentation);
     case "choice":
       return new NameChoice(makeNamePattern(el.children[0] as Element),
                             makeNamePattern(el.children[1] as Element));

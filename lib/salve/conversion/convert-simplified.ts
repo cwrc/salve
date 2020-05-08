@@ -34,7 +34,8 @@ function walk(el: Element): (Pattern | ElementPattern | Grammar) {
     case "value":
       return new Value(el.path, el.text, el.mustGetAttribute("type"),
                        el.mustGetAttribute("datatypeLibrary"),
-                       el.mustGetAttribute("ns"));
+                       el.mustGetAttribute("ns"),
+                       el.documentation);
     case "data":
       const children = el.children;
       const length = children.length;
@@ -93,7 +94,7 @@ function walkNameClass(el: Element): ConcreteName {
       return new NameChoice(walkNameClass(el.children[0] as Element),
                             walkNameClass(el.children[1] as Element));
     case "name":
-      return new Name(el.mustGetAttribute("ns"), el.text);
+      return new Name(el.mustGetAttribute("ns"), el.text, el.documentation);
     case "nsName":
       return new NsName(el.mustGetAttribute("ns"),
                         el.children.length !== 0 ?

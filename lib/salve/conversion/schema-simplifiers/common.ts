@@ -134,7 +134,8 @@ form the XML Schema library: don't know how to handle");
           el.replaceContent([new Text(value)]);
         }
 
-        const valuePattern = new Value(el.path, value, type, libname, ns);
+        const valuePattern = new Value(el.path, value, type, libname,
+          ns, el.documentation);
 
         // Accessing the value will cause it to be validated.
         // tslint:disable-next-line:no-unused-expression

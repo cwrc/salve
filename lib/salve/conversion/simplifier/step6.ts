@@ -17,8 +17,8 @@ function walk(el: Element, parentNs: string | null): void {
       const name = el.getAttribute("name");
       if (name !== undefined) {
         el.removeAttribute("name");
-
-        const nameEl = Element.makeElement("name", [new Text(name)]);
+        const nameEl = Element.makeElement(
+          "name", [new Text(name)], el.documentation);
 
         if (currentNs === undefined) {
           if (local === "attribute") {

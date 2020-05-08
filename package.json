@@ -14,7 +14,8 @@
   "author": "Louis-Dominique Dubeau <louisd@mangalamresearch.org>",
   "contributors": [
     "Jesse Bethel <keisetsu@gmail.com>",
-    "Bennett Buchanan <buchanan.3rd@gmail.com>"
+    "Bennett Buchanan <buchanan.3rd@gmail.com>",
+    "Raff Viglianti <raffaeleviglianti@gmai.com>"
   ],
   "main": "lib/salve/validate.js",
   "browser": "./salve.min.js",
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "@trust/webcrypto": "git+https://github.com/lddubeau/webcrypto.git#fix/pass-string-to-digest",
+    "@types/xregexp": "^4.3.0",
     "argparse": ">=1 <2",
     "file-url": "^3.0.0",
     "node-fetch": "^2.6.0",
@@ -90,6 +92,7 @@
     "salve-convert": "./bin/salve-convert"
   },
   "scripts": {
+    "build": "gulp",
     "test": "gulp test",
     "install_test": "gulp install_test",
     "preversion": "npm test && npm run install_test && git flow release start $npm_package_version",

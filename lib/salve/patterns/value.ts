@@ -18,6 +18,7 @@ import { EndResult, EventSet, InternalFireEventResult, InternalWalker,
 export class Value extends Pattern {
   readonly datatype: Datatype;
   readonly rawValue: string;
+  readonly documentation: string | undefined;
   private _value: any | undefined;
 
   /**
@@ -33,16 +34,20 @@ export class Value extends Pattern {
    * use. ``undefined`` means use the builtin library.
    *
    * @param ns The namespace in which to interpret the value.
+   * 
+   * @param documentation Documentation about the value.
    */
   // tslint:disable-next-line: no-reserved-keywords
   constructor(xmlPath: string, value: string, readonly type: string = "token",
-              readonly datatypeLibrary: string = "", readonly ns: string = "") {
+              readonly datatypeLibrary: string = "", readonly ns: string = "",
+              documentation?: string) {
     super(xmlPath);
     this.datatype = registry.get(this.datatypeLibrary).types[this.type];
     if (this.datatype === undefined) {
       throw new Error(`unknown type: ${type}`);
     }
     this.rawValue = value;
+    this.documentation = documentation;
   }
 
   get value(): any {

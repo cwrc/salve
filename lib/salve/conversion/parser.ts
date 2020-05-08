@@ -13,7 +13,7 @@ import { NameResolver, XML1_NAMESPACE,
          XMLNS_NAMESPACE } from "../name_resolver";
 import { Grammar, GrammarWalker } from "../patterns";
 import { fixPrototype } from "../tools";
-import { RELAXNG_URI } from "./simplifier/util";
+import { ANNOS_URI, RELAXNG_URI, XHTML_URI } from "./simplifier/util";
 
 export type ConcreteNode = Element | Text;
 
@@ -40,6 +40,8 @@ export class Element {
 
   uri: string;
 
+  documentation: string | undefined;
+
   // ns is meant to be immutable.
   private readonly ns: Record<string, string>;
 
@@ -56,6 +58,7 @@ export class Element {
               uri: string,
               ns: Record<string, string>,
               attributes: Record<string, SaxesAttribute>,
+              documentation: string | undefined,
               readonly children: ConcreteNode[]) {
     this.prefix = prefix;
     this.local = local;
@@ -63,6 +66,7 @@ export class Element {
     // Namespace declarations are immutable.
     this.ns = ns;
     this.attributes = attributes;
+    this.documentation = documentation;
 
     for (const child of children) {
       if (child.parent !== undefined) {
@@ -72,17 +76,20 @@ export class Element {
     }
   }
 
-  static fromSax(node: SaxesTag, children: ConcreteNode[]): Element {
+  static fromSax(node: SaxesTag, children: ConcreteNode[],
+                 documentation: string = ""): Element {
     return new Element(
       node.prefix,
       node.local,
       node.uri,
       node.ns,
       node.attributes as Record<string, SaxesAttribute>,
+      documentation,
       children);
   }
 
-  static makeElement(name: string, children: ConcreteNode[]): Element {
+  static makeElement(name: string, children: ConcreteNode[],
+                     documentation: string = ""): Element {
     return new Element(
       "",
       name,
@@ -91,6 +98,7 @@ export class Element {
       // creation.
       emptyNS,
       Object.create(null),
+      documentation,
       children);
   }
 
@@ -396,6 +404,7 @@ export class Element {
       this.uri,
       this.ns,
       newAttributes,
+      this.documentation,
       children);
   }
 }
@@ -551,9 +560,14 @@ export class BasicParser {
    * the XML file but a holder for the tree of elements. It has a single child
    * which is the root of the actual file parsed.
    */
-  protected readonly stack: { node: SaxesTag; children: ConcreteNode[] }[];
+  protected readonly stack: { node: SaxesTag; children: ConcreteNode[],
+    documentation?: string }[];
+
+  protected readonly docStack: { node: SaxesTag; text: string }[];
 
   protected drop: number = 0;
+
+  protected isAnnotation: boolean = false;
 
   constructor(readonly saxesParser: SaxesParser,
               protected readonly validator: ValidatorI = new NullValidator()) {
@@ -567,6 +581,7 @@ export class BasicParser {
       node: undefined as any,
       children: [],
     }];
+    this.docStack = [];
   }
 
   /**
@@ -583,16 +598,28 @@ export class BasicParser {
 
     // We can skip creating Element objects for foreign nodes and their
     // children.
-    if (node.uri !== RELAXNG_URI || this.drop !== 0) {
+    if ((node.uri !== RELAXNG_URI
+      && node.uri !== ANNOS_URI && node.uri !== XHTML_URI) || this.drop !== 0) {
       this.drop++;
 
       return;
     }
 
-    this.stack.push({
-      node,
-      children: [],
-    });
+    if (node.uri === ANNOS_URI || node.uri === XHTML_URI) {
+      if (!this.isAnnotation) {
+        this.isAnnotation = true;
+        this.docStack.push({
+          node,
+          text: "",
+        });
+      }
+    } else {
+      this.stack.push({
+        node,
+        children: [],
+      });
+    }
+
   }
 
   onclosetag(node: SaxesTag): void {
@@ -606,10 +633,37 @@ export class BasicParser {
       return;
     }
 
-    // tslint:disable-next-line:no-non-null-assertion
-    const { node: topNode, children } = this.stack.pop()!;
-    this.stack[this.stack.length - 1].children
-      .push(Element.fromSax(topNode, children));
+    if (this.isAnnotation) {
+      if (this.docStack.length === 1) {
+        // Annotations must be either the first child
+        // or an immediate sibling of a value element
+
+        const topNode = this.stack[this.stack.length - 1];
+        const doc = this.docStack[this.docStack.length - 1].text;
+        const childrenEls = topNode.children.filter(child => child.kind === "element");
+
+        if (childrenEls.length === 0) {
+          // Assign doc to topNode if it doesn't yet have children.
+          topNode.documentation = doc;
+        } else {
+          const lastChild = childrenEls[childrenEls.length - 1] as Element;
+          if (lastChild.local === "value") {
+            // Assign to first child if it's a value.
+            lastChild.documentation = doc;
+          }
+        }
+      }
+      // tslint:disable-next-line: no-unused-expression
+      this.docStack.pop()!;
+      if (this.docStack.length === 0) {
+        this.isAnnotation = false;
+      }
+    } else {
+      // tslint:disable-next-line:no-non-null-assertion
+      const { node: topNode, children, documentation } = this.stack.pop()!;
+      this.stack[this.stack.length - 1].children
+        .push(Element.fromSax(topNode, children, documentation));
+    }
   }
 
   ontext(text: string): void {
@@ -617,8 +671,11 @@ export class BasicParser {
     if (this.drop !== 0) {
       return;
     }
-
-    this.stack[this.stack.length - 1].children.push(new Text(text));
+    if (this.isAnnotation) {
+      this.docStack[this.docStack.length - 1].text += text;
+    } else {
+      this.stack[this.stack.length - 1].children.push(new Text(text));
+    }
   }
 
   onend(): void {

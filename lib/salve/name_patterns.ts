@@ -180,8 +180,11 @@ export class Name extends Base {
    *
    * @param name The name. Corresponds to the content of ``<name>``
    * in the simplified Relax NG syntax.
+   *
+   * @param documentation Attached documentation if available.
    */
-  constructor(readonly ns: string, readonly name: string) {
+  constructor(readonly ns: string, readonly name: string,
+              readonly documentation?: string) {
     super();
   }
 
@@ -213,17 +216,20 @@ export class Name extends Base {
     return false; // This is not a wildcard.
   }
 
-  toObject(): { ns: string; name: string } {
+  toObject(): { ns: string; name: string; documentation: string | undefined } {
     return {
       ns: this.ns,
       name: this.name,
+      documentation: this.documentation,
     };
   }
 
   asString(): string {
     // We don't need to escape this.name because names cannot contain
     // things that need escaping.
-    return `{"ns":"${escapeString(this.ns)}","name":"${this.name}"}`;
+    const doc = this.documentation ?
+      `,"documentation":"${this.documentation}"` : "";
+    return `{"ns":"${escapeString(this.ns)}","name":"${this.name}"${doc}}`;
   }
 
   simple(): true {

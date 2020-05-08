@@ -8,6 +8,10 @@ import { Element, isElement } from "../parser";
 
 // tslint:disable-next-line:no-http-string
 export const RELAXNG_URI = "http://relaxng.org/ns/structure/1.0";
+// tslint:disable-next-line:no-http-string
+export const ANNOS_URI = "http://relaxng.org/ns/compatibility/annotations/1.0";
+// tslint:disable-next-line:no-http-string
+export const XHTML_URI = "http://www.w3.org/1999/xhtml";
 
 export function findChildrenByLocalName(el: Element,
                                         name: string): Element[] {
