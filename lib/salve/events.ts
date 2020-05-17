@@ -127,7 +127,8 @@ export class AttributeNameEvent extends NamePatternEvent<"attributeName"> {
  */
 export abstract class ValueEvent<Name extends string> extends Event {
   protected constructor(readonly name: Name,
-                        readonly value: string | RegExp) {
+                        readonly value: string | RegExp,
+                        readonly documentation?: string) {
     super();
   }
 
@@ -152,16 +153,16 @@ export abstract class ValueEvent<Name extends string> extends Event {
 export class AttributeValueEvent extends ValueEvent<"attributeValue"> {
   readonly isAttributeEvent: true = true;
 
-  constructor(value: string | RegExp) {
-    super("attributeValue", value);
+  constructor(value: string | RegExp, documentation?: string) {
+    super("attributeValue", value, documentation);
   }
 }
 
 export class TextEvent extends ValueEvent<"text"> {
   readonly isAttributeEvent: false = false;
 
-  constructor(value: string | RegExp) {
-    super("text", value);
+  constructor(value: string | RegExp, documentation?: string) {
+    super("text", value, documentation);
   }
 }
 

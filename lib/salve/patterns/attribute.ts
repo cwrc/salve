@@ -128,8 +128,7 @@ class AttributeWalker implements InternalWalker {
       if (ev.name !== "text") {
         throw new Error(`unexpected event type: ${ev.name}`);
       }
-
-      return new AttributeValueEvent(ev.value);
+      return new AttributeValueEvent(ev.value, ev.documentation);
     });
   }
 

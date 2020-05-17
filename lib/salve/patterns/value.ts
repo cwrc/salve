@@ -111,7 +111,7 @@ class ValueWalker implements InternalWalker {
 
   possible(): EventSet {
     return new Set(this.matched ? undefined :
-                   [new TextEvent(this.el.rawValue)]);
+                   [new TextEvent(this.el.rawValue, this.el.documentation)]);
   }
 
   possibleAttributes(): EventSet {
