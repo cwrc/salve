@@ -612,6 +612,8 @@ export class BasicParser {
           node,
           text: "",
         });
+      } else {
+        this.drop++;
       }
     } else {
       this.stack.push({
