@@ -76,7 +76,7 @@ Basic Usage
 A typical usage scenario would be as follows:
 
     // Import the validation module
-    const salve = require("salve");
+    const salve = require("salve-annos");
 
     // Source is a URL to the Relax NG schema to use. A ``file://`` URL
     // may be used to load from the local fs.

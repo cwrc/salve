@@ -31,7 +31,7 @@ module.exports = function configure(config) {
     autoWatch: false,
     browsers: ["ChromeHeadless", "FirefoxHeadless"],
     browserStack: {
-      project: "salve",
+      project: "salve-annos",
     },
     customLaunchers: {
       ChromeWin: {

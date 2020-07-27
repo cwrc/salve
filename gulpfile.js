@@ -204,7 +204,7 @@ gulp.task("install_test", gulp.series(
     yield execFile("npm", ["install", `../${packname}`], { cwd: testDir });
     let module = yield fs.readFileAsync("lib/salve/parse.ts");
     module = module.toString();
-    module = module.replace("./validate", "salve");
+    module = module.replace("./validate", "salve-annos");
     yield fs.writeFileAsync(path.join(testDir, "parse.ts"), module);
     yield execFileAndReport("../../node_modules/.bin/tsc",
                             ["--lib", "es2015,dom", "--esModuleInterop",
@@ -248,7 +248,7 @@ gulp.task("typedoc",
               const { version } = JSON.parse(fs.readFileSync("package.json"));
               const tsoptions = [
                 "--out", `./build/api/salve/${version}`,
-                "--name", "salve",
+                "--name", "salve-annos",
                 "--tsconfig", "./tsconfig.json",
                 "--listInvalidSymbolLinks",
               ];
