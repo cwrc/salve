@@ -1,3 +1,1 @@
-declare const x: {};
-
-export default x;
+declare module '*.json'

@@ -13,7 +13,7 @@ import { readTreeFromJSON } from "../../json-format/read";
 import { NameResolver } from "../../name_resolver";
 import { AnyName, ConcreteName, Grammar, Name, NameChoice,
          NsName } from "../../patterns";
-import * as relaxng from "../../schemas/relaxng";
+import * as relaxng from "../../schemas/relaxng.json";
 import { BasicParser, Element, Text, Validator } from "../parser";
 import { ResourceLoader } from "../resource-loader";
 import { ManifestEntry, registerSimplifier, SchemaSimplifierOptions,
