@@ -400,6 +400,10 @@ OPTION_NO_PATHS},"d":`);
   private _name(el: Element): void {
     this.outputAsString(el.mustGetAttribute("ns"));
     this.outputAsString(el.text);
+
+    //add documentation
+    const documentation = el.documentation?.replace(/\n/g, "\\n") ?? "";
+    this.outputAsString(documentation);;
   }
 
   // @ts-ignore
