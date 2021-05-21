@@ -15,7 +15,8 @@
   "contributors": [
     "Jesse Bethel <keisetsu@gmail.com>",
     "Bennett Buchanan <buchanan.3rd@gmail.com>",
-    "Raff Viglianti <raffaeleviglianti@gmai.com>"
+    "Raff Viglianti <raffaeleviglianti@gmai.com>",
+    "Luciano Frizzera <lucaju@gmail.com>"
   ],
   "main": "lib/salve/validate.js",
   "browser": "./salve.min.js",
