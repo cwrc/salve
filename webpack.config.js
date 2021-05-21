@@ -37,7 +37,7 @@ module.exports = {
     path: `${__dirname}/build/dist`,
     filename: "[name].js",
     sourceMapFilename: "[name].js.map",
-    library: "salve",
+    library: "salve-annos",
     libraryTarget: "umd",
     globalObject: "this",
   },
